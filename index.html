@@ -1,0 +1,23 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://10.0.1.21:8081');
+  socket.on('message', function (data) {
+    document.getElementById('messages').innerHTML += data+'<br/>';
+  });
+  var clientLocation;
+  navigator.geolocation.getCurrentPosition(function(position) {
+  	clientLocation = {
+  		latitude: position.coords.latitude,
+  		longitude: position.coords.longitude
+  	};
+  	socket.emit('location', clientLocation)
+
+  });
+  function emit() {
+  	var message = document.getElementById('text').value;
+  	socket.emit('broadcast', {message: message, location: clientLocation});
+  }
+</script>
+
+<input type="text" id="text" /> <button onclick="emit()">broadcast</button>
+<div id="messages"></div>
